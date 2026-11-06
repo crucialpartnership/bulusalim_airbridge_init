@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Merged into the app manifest. The app's <application> has no
+         android:name, so the merger takes this value. -->
+    <application android:name="com.bulusalim.airbridgeinit.BulusalimApplication" />
+</manifest>

@@ -1,0 +1,58 @@
+group 'com.bulusalim.airbridgeinit'
+version '1.0'
+
+buildscript {
+    ext.kotlin_version = '1.9.22'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.bulusalim.airbridgeinit'
+    }
+
+    compileSdkVersion 34
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    defaultConfig {
+        minSdkVersion 21
+    }
+}
+
+dependencies {
+    // Compile against the Airbridge Flutter plugin's Android module.
+    // The app already bundles it, so compileOnly avoids a duplicate.
+    def airbridgeProject = rootProject.findProject(':airbridge_flutter_sdk')
+    if (airbridgeProject == null) {
+        throw new GradleException(
+            "bulusalim_airbridge_init: airbridge_flutter_sdk was not found. " +
+            "Add airbridge_flutter_sdk to the app's dependencies."
+        )
+    }
+    compileOnly airbridgeProject
+}
