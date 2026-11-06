@@ -1,6 +1,5 @@
 import Flutter
 import UIKit
-import airbridge_flutter_sdk
 
 public class AirbridgeInitPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -8,12 +7,29 @@ public class AirbridgeInitPlugin: NSObject, FlutterPlugin {
     registrar.addApplicationDelegate(instance)
   }
 
+  private static func airbridge() -> NSObject.Type? {
+    let names = ["AirbridgeFlutter", "airbridge_flutter_sdk.AirbridgeFlutter"]
+    for name in names {
+      if let cls = NSClassFromString(name) as? NSObject.Type { return cls }
+    }
+    return nil
+  }
+
+  private static func call(_ selectorName: String, _ arg: Any) {
+    let sel = NSSelectorFromString(selectorName)
+    guard let cls = airbridge(), cls.responds(to: sel) else {
+      NSLog("[bulusalim_airbridge_init] AirbridgeFlutter.\(selectorName) not found")
+      return
+    }
+    _ = cls.perform(sel, with: arg)
+  }
+
   public func application(
     _ application: UIApplication,
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
-    AirbridgeFlutter.trackDeeplink(url: url)
+    AirbridgeInitPlugin.call("trackDeeplinkWithUrl:", url)
     return false
   }
 
@@ -22,7 +38,7 @@ public class AirbridgeInitPlugin: NSObject, FlutterPlugin {
     continue userActivity: NSUserActivity,
     restorationHandler: @escaping ([Any]) -> Void
   ) -> Bool {
-    AirbridgeFlutter.trackDeeplink(userActivity: userActivity)
+    AirbridgeInitPlugin.call("trackDeeplinkWithUserActivity:", userActivity)
     return false
   }
 }
