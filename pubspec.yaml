@@ -18,3 +18,5 @@ flutter:
       android:
         package: com.bulusalim.airbridgeinit
         pluginClass: AirbridgeInitPlugin
+      ios:
+        pluginClass: AirbridgeInitPlugin
